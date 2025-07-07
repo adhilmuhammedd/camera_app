@@ -15,6 +15,7 @@ class FullImageScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Image", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [
@@ -34,11 +35,11 @@ class FullImageScreen extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.only(bottom: 15,top: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton.icon(
+                IconButton(
                   onPressed: () async {
                     bool confirm = await _showConfirmDialog(context);
                     if (confirm) {
@@ -48,19 +49,17 @@ class FullImageScreen extends StatelessWidget {
                       }
                     }
                   },
-                  icon: const Icon(Icons.delete),
-                  label: const Text("Delete"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  icon: const Icon(Icons.delete,color: Colors.white),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 ),
-                ElevatedButton.icon(
+                IconButton(
                   onPressed: () {
                     Share.shareXFiles([XFile(imageFile.path)],
                         text: "Check out this image!");
                   },
-                  icon: const Icon(Icons.share),
-                  label: const Text("Share"),
+                  icon: const Icon(Icons.share,color: Colors.white,),
                 ),
-                ElevatedButton.icon(
+                IconButton(
                   onPressed: () async {
                     var stat = await imageFile.stat();
                     String size =
@@ -82,8 +81,7 @@ class FullImageScreen extends StatelessWidget {
                       },
                     );
                   },
-                  icon: const Icon(Icons.info),
-                  label: const Text("Info"),
+                  icon: const Icon(Icons.info,color: Colors.white,),
                 ),
               ],
             ),

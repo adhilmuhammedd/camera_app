@@ -27,6 +27,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         title: const Text("Gallery",
         style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: Colors.black,
       body: images.isEmpty

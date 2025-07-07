@@ -18,6 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   List<CameraDescription> cameras = [];
   int selectedCameraIndex = 0;
   List<File> capturedImages = [];
+  bool isFlashOn = false;
 
   @override
   void initState() {
@@ -47,6 +48,11 @@ class _MainScreenState extends State<MainScreen> {
         ResolutionPreset.high,
       );
       await cameraController!.initialize();
+
+      if (cameras[cameraIndex].lensDirection == CameraLensDirection.front) {
+      isFlashOn = false;
+    }
+
       if (mounted) setState(() {});
     } catch (e) {
       _showSnackBar('Failed to init camera: $e');
@@ -67,12 +73,13 @@ class _MainScreenState extends State<MainScreen> {
       final xFile = await cameraController!.takePicture();
       final appDir = await getApplicationDocumentsDirectory();
       final fileName = path.basename(xFile.path);
-      final savedImage = await File(xFile.path).copy('${appDir.path}/$fileName');
+      final savedImage = await File(
+        xFile.path,
+      ).copy('${appDir.path}/$fileName');
 
       setState(() {
         capturedImages.insert(0, savedImage);
       });
-
     } catch (e) {
       _showSnackBar('Capture failed: $e');
     }
@@ -83,8 +90,9 @@ class _MainScreenState extends State<MainScreen> {
     final files = appDir.listSync();
 
     List<File> loadedImages = files
-        .where((file) =>
-            file.path.endsWith('.jpg') || file.path.endsWith('.png'))
+        .where(
+          (file) => file.path.endsWith('.jpg') || file.path.endsWith('.png'),
+        )
         .map((file) => File(file.path))
         .toList();
 
@@ -121,9 +129,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _openFullScreen(File imageFile) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => FullImageScreen(imageFile: imageFile),
-      ),
+      MaterialPageRoute(builder: (_) => FullImageScreen(imageFile: imageFile)),
     );
 
     if (result == true) {
@@ -142,14 +148,42 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          if (cameraController !=null &&
+          cameraController!.description.lensDirection == CameraLensDirection.back)
+          IconButton(
+            onPressed: () async {
+              setState(() {
+                isFlashOn = !isFlashOn;
+              });
+
+              if (cameraController != null) {
+                await cameraController!.setFlashMode(
+                  isFlashOn ? FlashMode.torch : FlashMode.off,
+                );
+              }
+            },
+            icon: Icon(
+              isFlashOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Stack(
           children: [
-            CameraPreview(cameraController!),
+            Container(
+              height: 625,
+              width: 390,
+              child: CameraPreview(cameraController!)),
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 21.0),
+                padding: const EdgeInsets.only(bottom: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
