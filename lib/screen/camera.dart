@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:camera_app/screen/fullScreen.dart';
 import 'package:camera_app/screen/gallery.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
